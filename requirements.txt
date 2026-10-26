@@ -1,0 +1,37 @@
+# === Core LLM orchestration ===
+langchain
+langchain-community
+langchain-ollama
+ollama
+
+# === Retrieval: sparse (BM25) ===
+rank-bm25
+
+# === Retrieval: dense (semantic) + reranker ===
+sentence-transformers
+FlagEmbedding      # untuk model embedding BGE-M3
+faiss-cpu          # ganti ke faiss-gpu kalau punya GPU + CUDA
+
+# === PDF -> OCR pipeline ===
+# (dipakai karena PDF KUHP dari peraturan.bpk.go.id punya font
+# ter-embed dengan ToUnicode CMap rusak, jadi ekstraksi teks native
+# menghasilkan karakter salah baca -> OCR penuh jadi solusi yang benar)
+pytesseract        # OCR engine wrapper
+pdf2image          # konversi halaman PDF ke gambar (butuh brew install poppler)
+opencv-python-headless  # preprocessing gambar sebelum OCR (grayscale, denoise, binarisasi)
+pillow             # manipulasi gambar pendukung
+ipywidgets         # widget upload interaktif di Jupyter
+notebook           # untuk menjalankan file .py sebagai Jupyter Notebook di VSCode
+
+# === UI ===
+streamlit
+
+# === Evaluasi ===
+ragas
+datasets
+
+# === Utilitas umum ===
+numpy
+pandas
+tqdm
+python-dotenv

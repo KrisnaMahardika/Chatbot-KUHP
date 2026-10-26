@@ -1,0 +1,5 @@
+{
+  "metode": "BM25Okapi (rank_bm25)",
+  "tokenisasi": "lowercase + regex [a-z0-9]+ (tanpa stopword removal / stemming)",
+  "jumlah_pasal": 624
+}
