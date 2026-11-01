@@ -305,3 +305,50 @@ def merge_expansion(query: str, raw: str) -> str:
     """query + istilah hasil expansion (tanpa tambahan kalau tidak ada istilah yang layak)."""
     istilah = clean_istilah(raw, query)
     return f"{query} {', '.join(istilah)}" if istilah else query
+
+
+# ============================================================
+# PENYARING KONTEKS (apakah pertanyaan masih berkaitan dengan hukum?)
+# ============================================================
+# Sengaja longgar: hanya "TIDAK" kalau jelas tidak berhubungan dengan hukum sama sekali. Pertanyaan
+# hukum yang ditulis santai, atau hukum di luar pidana (sewa, cerai), tetap lanjut. Klarifikasi
+# "tidak ada pasal yang cocok" untuk pertanyaan hukum ditangani di akhir pipeline, bukan di sini.
+
+_ATURAN_SCOPE = """Tugasmu: menentukan apakah pertanyaan berikut masih berkaitan dengan hukum (perbuatan yang bisa dipidana, hukuman, pasal, undang-undang, hak atau kewajiban hukum, proses hukum), walaupun ditulis santai atau memakai bahasa gaul.
+
+Jawab hanya satu kata:
+- YA jika berkaitan dengan hukum, atau kamu ragu.
+- TIDAK hanya jika jelas tidak berhubungan dengan hukum sama sekali (matematika, resep, cuaca, hiburan, coding, obrolan umum, dan sebagainya)."""
+
+# Contoh penyaring ini sengaja berbeda dari pertanyaan uji (jangan dipakai ulang sebagai uji).
+SCOPE_CONTOH = [
+    ("temen minjem duit nggak dibalikin, bisa dipidana ga?", "YA"),
+    ("resep nasi goreng yang enak gimana", "TIDAK"),
+    ("dipukul orang sampai lebam, hukumannya apa?", "YA"),
+    ("berapa hasil 25 dikali 4", "TIDAK"),
+    ("rumah yang saya kontrak tiba-tiba diusir pemiliknya, bisa dituntut?", "YA"),
+    ("film apa yang bagus buat ditonton malam ini", "TIDAK"),
+    ("apa hukuman untuk pelaku penipuan", "YA"),
+]
+
+
+def scope_messages(query: str) -> list[dict]:
+    """Pesan chat untuk penyaring konteks (jawaban model: YA atau TIDAK)."""
+    pesan = [{"role": "system", "content": _ATURAN_SCOPE}]
+    for q, jawab in SCOPE_CONTOH:
+        pesan.append({"role": "user", "content": _user(q)})
+        pesan.append({"role": "assistant", "content": jawab})
+    pesan.append({"role": "user", "content": _user(query)})
+    return pesan
+
+
+_TIDAK = re.compile(r"^\W*tidak\b", re.IGNORECASE)
+
+
+def parse_scope(raw: str) -> bool:
+    """True = lanjut ke pipeline. Hanya jawaban yang diawali "TIDAK" yang menghentikan;
+    kosong atau jawaban aneh dianggap lanjut (longgar)."""
+    return not _TIDAK.match(raw or "")
+
+
+

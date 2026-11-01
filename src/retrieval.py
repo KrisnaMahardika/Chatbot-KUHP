@@ -1,15 +1,20 @@
+# macOS: torch HARUS termuat sebelum faiss (libomp ganda -> kernel crash).
+try:
+    import torch  # noqa: F401
+except ImportError:
+    pass
+
 import re
 import numpy as np
 import faiss
 import ollama
-import torch
 from collections import defaultdict
 from FlagEmbedding import FlagReranker
 
 try:  # dipakai sebagai paket
-    from .query_prompts import rewrite_messages, expand_messages, clean_rewrite, merge_expansion
+    from .query_prompts import rewrite_messages, expand_messages, clean_rewrite, merge_expansion, scope_messages, parse_scope
 except ImportError:  # dipakai sebagai modul biasa (sys.path.append("src"))
-    from query_prompts import rewrite_messages, expand_messages, clean_rewrite, merge_expansion
+    from query_prompts import rewrite_messages, expand_messages, clean_rewrite, merge_expansion, scope_messages, parse_scope
 
 
 # ============================================================
@@ -21,20 +26,81 @@ def tokenize(text: str) -> list[str]:
 
 
 # --- Routing ---
+MAKS_PASAL = 10  # batas pasal yang diambil sekaligus lewat lookup (rentang yang lebih lebar dipotong)
+
+_RENTANG = r"(?:-|–|—|sampai\s+dengan|sampai|s/d|s\.d\.?|hingga)"
+_SAMBUNG = r"(?:,\s*(?:dan\s+)?|dan\s+|serta\s+|&\s*)"
+_BUTIR = rf"\d+(?:\s*{_RENTANG}\s*(?:pasal\s*)?\d+)?"
+_DAFTAR_PASAL = re.compile(rf"pasal\s*({_BUTIR}(?:\s*{_SAMBUNG}{_BUTIR})*)", re.IGNORECASE)
+_ANGKA_ATAU_RENTANG = re.compile(rf"(\d+)(?:\s*{_RENTANG}\s*(?:pasal\s*)?(\d+))?", re.IGNORECASE)
+
+
 def extract_pasal_number(query: str) -> int | None:
-    """Deteksi apakah query menyebut nomor pasal eksplisit."""
+    """Nomor pasal pertama yang disebut (dipertahankan untuk kode lama; routing memakai extract_pasal_numbers)."""
     match = re.search(r"pasal\s+(\d+)", query, re.IGNORECASE)
     return int(match.group(1)) if match else None
 
 
+def extract_pasal_numbers(query: str) -> list[int]:
+    """Semua nomor pasal yang disebut, urut kemunculan, tanpa duplikat, maksimal MAKS_PASAL.
+
+    Contoh: "pasal 476 dengan pasal 486", "pasal 476 dan 486", "pasal 476, 477, dan 478",
+    "pasal476", "pasal 476 sampai 480", "pasal 476-480", "pasal 476 s/d 480"."""
+    angka: list[int] = []
+    for m in _DAFTAR_PASAL.finditer(query):
+        for a, b in _ANGKA_ATAU_RENTANG.findall(m.group(1)):
+            awal = int(a)
+            akhir = int(b) if b else awal
+            if akhir < awal:
+                awal, akhir = akhir, awal
+            for n in range(awal, min(akhir, awal + MAKS_PASAL - 1) + 1):
+                if n not in angka:
+                    angka.append(n)
+    return angka[:MAKS_PASAL]
+
+
+def pesan_berhenti(query: str, pasal_index: dict | None = None) -> str:
+    """Pesan untuk pengguna ketika search() mengembalikan [] (tanpa panggilan LLM).
+
+    Kalau query menyebut nomor pasal dan tidak satu pun ada di korpus -> "tidak ditemukan".
+    Selain itu, berarti penyaring konteks yang menghentikan -> PESAN_DI_LUAR_KONTEKS."""
+    nomor = extract_pasal_numbers(query)
+    if nomor and pasal_index is not None and not any(n in pasal_index for n in nomor):
+        return f"Pasal {', '.join(str(n) for n in nomor)} tidak ditemukan dalam KUHP (UU No. 1 Tahun 2023)."
+    return PESAN_DI_LUAR_KONTEKS
+
+
+def route_query_all(query: str, pasal_index: dict) -> list[dict] | None:
+    """None = query tidak menyebut nomor pasal (lanjut ke Retrieval).
+    List = pasal yang disebut dan ada di korpus (kosong kalau semua nomornya tidak ada)."""
+    nomor = extract_pasal_numbers(query)
+    if not nomor:
+        return None
+    return [pasal_index[n] for n in nomor if n in pasal_index]
+
+
 def route_query(query: str, pasal_index: dict) -> dict | None:
-    """Putuskan jalur query: kalau sebut nomor pasal eksplisit,
-    jawab langsung lewat lookup (skip Retrieval sama sekali).
-    Return None kalau query tetap perlu lanjut ke Retrieval."""
+    """Versi lama (hanya pasal pertama), dipertahankan untuk kode lama."""
     nomor = extract_pasal_number(query)
     if nomor is not None:
         return pasal_index.get(nomor)
     return None
+
+
+# --- Penyaring konteks ---
+PESAN_DI_LUAR_KONTEKS = "Pertanyaan ini di luar cakupan chatbot KUHP."
+
+
+def in_scope(query: str) -> bool:
+    """False kalau pertanyaan jelas bukan soal hukum -> pipeline berhenti sebelum rewrite.
+    Longgar: ragu atau jawaban aneh = True (lanjut). Teks prompt: query_prompts.scope_messages."""
+    response = ollama.chat(
+        model="gemma4:12b-mlx",
+        messages=scope_messages(query),
+        think=False,
+        options={"temperature": 0, "num_predict": 8},  # jawabannya satu kata (YA / TIDAK)
+    )
+    return parse_scope(response["message"]["content"])
 
 
 # --- Rewriting ---
@@ -45,6 +111,7 @@ def rewrite_query(query: str, variant: str | None = None) -> str:
     response = ollama.chat(
         model="gemma4:12b-mlx",
         messages=rewrite_messages(query, variant),
+        think=False,  # gemma4 punya mode thinking: tanpa ini 1 panggilan bisa menit-an
         options={"temperature": 0},
     )
     return clean_rewrite(response["message"]["content"], query)
@@ -56,6 +123,7 @@ def expand_query(query: str, variant: str | None = None) -> str:
     response = ollama.chat(
         model="gemma4:12b-mlx",
         messages=expand_messages(query, variant),
+        think=False,
         options={"temperature": 0},
     )
     return merge_expansion(query, response["message"]["content"])
@@ -141,11 +209,14 @@ def rerank(query, candidates, top_k=5):
 
 def search(query, method, chunks, bm25=None, model=None, index=None, top_k=5,
            pasal_index=None, use_reranker=False, use_rewriting=False, use_expansion=False,
-           variant=None):
+           variant=None, use_scope_gate=False):
     if pasal_index is not None:
-        chunk = route_query(query, pasal_index)
-        if chunk is not None:
-            return [(chunk, 1.0)]
+        ditemukan = route_query_all(query, pasal_index)
+        if ditemukan is not None:  # menyebut nomor pasal -> lookup, tanpa Retrieval
+            return [(chunk, 1.0) for chunk in ditemukan]  # [] kalau semua nomor tidak ada di korpus
+
+    if use_scope_gate and not in_scope(query):
+        return []  # [] = di luar konteks hukum -> tampilkan PESAN_DI_LUAR_KONTEKS
 
     if use_rewriting:
         query = rewrite_query(query, variant)
