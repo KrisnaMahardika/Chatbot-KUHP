@@ -105,26 +105,24 @@ def in_scope(query: str) -> bool:
 
 # --- Rewriting ---
 def rewrite_query(query: str, variant: str | None = None) -> str:
-    """Ubah bahasa santai jadi bahasa pasal sebelum masuk Retrieval.
-
-    Teks prompt ada di query_prompts.py (varian: lihat PROMPT_VARIANT di sana)."""
+    """Ubah bahasa santai jadi kalimat pernyataan hukum formal sebelum masuk Retrieval."""
     response = ollama.chat(
         model="gemma4:12b-mlx",
         messages=rewrite_messages(query, variant),
         think=False,  # gemma4 punya mode thinking: tanpa ini 1 panggilan bisa menit-an
-        options={"temperature": 0},
+        options={"temperature": 0, "num_predict": 100},
     )
     return clean_rewrite(response["message"]["content"], query)
 
 
 # --- Expansion ---
 def expand_query(query: str, variant: str | None = None) -> str:
-    """Tambahkan nama tindak pidana dan frasa kunci pasal ke query."""
+    """Tambahkan nama delik KUHP dan frasa unsur pasal ke query."""
     response = ollama.chat(
         model="gemma4:12b-mlx",
         messages=expand_messages(query, variant),
         think=False,
-        options={"temperature": 0},
+        options={"temperature": 0, "num_predict": 60},
     )
     return merge_expansion(query, response["message"]["content"])
 
