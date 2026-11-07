@@ -1,0 +1,20 @@
+{
+  "model": "gemma4:12b-mlx",
+  "varian": {
+    "v1_fewshot": {
+      "q01": {
+        "pertanyaan": "motor saya diambil orang pas lagi parkir, kena pasal apa?",
+        "rewrite": "Setiap Orang yang mengambil barang milik orang lain seluruhnya atau sebagian dengan maksud untuk memilikinya secara melawan hukum",
+        "expand": "motor saya diambil orang pas lagi parkir, kena pasal apa? pencurian, mengambil barang milik orang lain, tanpa izin",
+        "rewrite_expand": "Setiap Orang yang mengambil barang milik orang lain seluruhnya atau sebagian dengan maksud untuk memilikinya secara melawan hukum pencurian"
+      },
+      "q02": {
+        "pertanyaan": "ada yang sengaja menghilangkan nyawa orang lain, hukumannya apa?",
+        "rewrite": "Setiap Orang yang dengan sengaja merampas nyawa orang lain",
+        "expand": "ada yang sengaja menghilangkan nyawa orang lain, hukumannya apa? pembunuhan, dengan sengaja",
+        "rewrite_expand": "Setiap Orang yang dengan sengaja merampas nyawa orang lain pembunuhan, menghilangkan nyawa"
+      }
+    }
+  },
+  "diperbarui": "2026-11-08T00:55:19"
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "q01",
+    "pertanyaan": "motor saya diambil orang pas lagi parkir, kena pasal apa?",
+    "pasal": 476,
+    "catatan": "CONTOH FORMAT. Ganti dengan pertanyaan dan ground truth yang sudah dikonfirmasi."
+  },
+  {
+    "id": "q02",
+    "pertanyaan": "ada yang sengaja menghilangkan nyawa orang lain, hukumannya apa?",
+    "pasal": [458],
+    "catatan": "CONTOH FORMAT. 'pasal' boleh berupa daftar kalau lebih dari satu pasal dianggap benar."
+  },
+  {
+    "id": "q03",
+    "pertanyaan": "aku disiul siulkan oleh orang random",
+    "pasal": null,
+    "catatan": "Ambigu; menunggu konfirmasi ahli hukum. Selama null, pertanyaan ini dilewati."
+  }
+]

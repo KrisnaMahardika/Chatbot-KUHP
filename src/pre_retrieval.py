@@ -89,21 +89,18 @@ def pesan_berhenti(query: str, pasal_index: dict | None = None) -> str:
 
 @lru_cache(maxsize=1)
 def get_llm_scope() -> ChatOllama:
-    # return ChatOllama(model=LLM_MODEL, temperature=0, reasoning=False, num_predict=8)
     return ChatOllama(model=LLM_MODEL, temperature=0, reasoning=False)
     # return ChatOllama(model=LLM_MODEL, temperature=0)
 
 
 @lru_cache(maxsize=1)
 def get_llm_rewrite() -> ChatOllama:
-    # return ChatOllama(model=LLM_MODEL, temperature=0, reasoning=False, num_predict=100)
     return ChatOllama(model=LLM_MODEL, temperature=0, reasoning=False)
     # return ChatOllama(model=LLM_MODEL, temperature=0)
 
 
 @lru_cache(maxsize=1)
 def get_llm_expand() -> ChatOllama:
-    # return ChatOllama(model=LLM_MODEL, temperature=0, reasoning=False, num_predict=60)
     return ChatOllama(model=LLM_MODEL, temperature=0, reasoning=False)
     # return ChatOllama(model=LLM_MODEL, temperature=0)
 
