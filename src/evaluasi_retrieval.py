@@ -1,13 +1,20 @@
 """Evaluasi retrieval KUHP RAG: Hit@k, Recall@k, dan MRR untuk semua skenario.
 
-Dibuat dua tahap supaya variasi LLM tidak ikut mengaburkan perbandingan antarskenario:
+Tiga perintah, dijalankan berurutan dari root proyek. Cache dan evaluasi dipisah supaya variasi LLM
+tidak ikut mengaburkan perbandingan antarskenario:
 
-  cache     jalankan rewrite dan expand (LLM) sekali untuk tiap pertanyaan dan varian prompt,
-            simpan ke satu file JSON. Bisa dilanjutkan kalau terputus: entri yang sudah ada dilewati.
-  evaluasi  baca cache itu, jalankan retrieval untuk semua skenario, hitung metrik. Tanpa LLM.
+  konfirmasi  terapkan keputusan ahli hukum (lembar tinjauan .xlsx atau .csv) ke pertanyaan.json:
+              setuju -> pasal = kandidat_pasal; koreksi -> pasal dari kolom PASAL KOREKSI (angka
+              dipisah koma, rentang seperti 476-480 ditolak); tolak -> status "ditolak" (tidak dihitung);
+              kosong -> "belum ditinjau" (pasal null, dilewati). Pasal dicek terhadap chunks.json.
+              Kalau ada kesalahan isian, tidak ada yang ditulis. Aman dijalankan berulang selama
+              tinjauan berlangsung: lembar adalah sumber kebenaran untuk id yang ada di dalamnya,
+              entri yang id-nya tidak ada di lembar (mis. u01 buatan sendiri) tidak disentuh.
+  cache       jalankan rewrite dan expand (LLM) sekali untuk tiap pertanyaan dan varian prompt,
+              simpan ke satu file JSON. Bisa dilanjutkan kalau terputus: entri yang sudah ada dilewati.
+  evaluasi    baca cache itu, jalankan retrieval untuk semua skenario, hitung metrik. Tanpa LLM.
 
-Dipakai dari root proyek:
-
+  python src/evaluasi_retrieval.py konfirmasi
   python src/evaluasi_retrieval.py cache
   python src/evaluasi_retrieval.py evaluasi
 
@@ -15,12 +22,16 @@ Format pertanyaan (default data/eval/pertanyaan.json), list objek:
 
   [{"id": "q01", "pertanyaan": "motor saya diambil orang pas parkir", "pasal": 476},
    {"id": "q02", "pertanyaan": "...", "pasal": [476, 477]},   # beberapa pasal dianggap benar
-   {"id": "q03", "pertanyaan": "...", "pasal": null}]         # belum ada ground truth: dilewati
+   {"id": "q03", "pertanyaan": "...", "pasal": null,          # belum ada ground truth: dilewati
+    "kandidat_pasal": [458], "ambigu": true}]                  # usulan penyusun; ambigu = tidak dihitung
 
 `pasal` = nomor pasal seperti di chunks.json. Kunci lain yang dikenali: "question" atau "query" untuk
 teks pertanyaan, "ground_truth_pasal" untuk `pasal`. `id` boleh dihilangkan (diisi q01, q02, ...).
+`kandidat_pasal` hanya dipakai `konfirmasi` (untuk keputusan "setuju"); entri lain bebas diisi.
 
 Pertanyaan yang otomatis dikeluarkan (dan dilaporkan di keluaran):
+  - ditolak ahli hukum (status "ditolak")
+  - ambigu: dilaporkan terpisah, tidak masuk angka utama. Pakai --sertakan-ambigu kalau mau dihitung.
   - tanpa ground truth (pasal kosong atau bukan angka, mis. "[dikonfirmasi ahli hukum]")
   - menyebut nomor pasal: di pipeline asli ini lewat lookup, bukan retrieval
   - pasalnya dipakai sebagai contoh few-shot (query_prompts.contoh_pasal()): bocor ke prompt.
@@ -47,6 +58,7 @@ import argparse
 import csv
 import json
 import os
+import re
 import sys
 import time
 from dataclasses import dataclass
@@ -62,6 +74,8 @@ from query_prompts import VARIANTS, contoh_pasal
 DEFAULT_PERTANYAAN = "data/eval/pertanyaan.json"
 DEFAULT_CACHE = "data/eval/cache_pre_retrieval.json"
 DEFAULT_HASIL = "data/eval/hasil"
+DEFAULT_TINJAUAN = "data/eval/lembar_tinjauan.xlsx"
+DEFAULT_CHUNKS = "data/processed/chunks.json"
 
 SEMUA_METODE = ["bm25", "semantic", "hybrid"]
 KUNCI_CACHE = {"rewrite": "rewrite", "expand": "expand", "rewrite+expand": "rewrite_expand"}
@@ -78,6 +92,8 @@ class Item:
     pertanyaan: str
     pasal: list[int]  # kosong = belum ada ground truth
     catatan: str = ""
+    ambigu: bool = False
+    status: str = ""
 
 
 def _ke_daftar_pasal(nilai) -> list[int]:
@@ -110,22 +126,37 @@ def load_pertanyaan(path: str) -> list[Item]:
             raise ValueError(f"id ganda di {path}: {id_}")
         sudah.add(id_)
         items.append(
-            Item(id_, teks, _ke_daftar_pasal(d.get("pasal", d.get("ground_truth_pasal"))), d.get("catatan", ""))
+            Item(
+                id_,
+                teks,
+                _ke_daftar_pasal(d.get("pasal", d.get("ground_truth_pasal"))),
+                d.get("catatan", ""),
+                bool(d.get("ambigu")),
+                str(d.get("status") or ""),
+            )
         )
     return items
 
 
-def pilih_item(items: list[Item], sertakan_contoh: bool = False) -> tuple[list[Item], dict[str, list[str]]]:
+def pilih_item(
+    items: list[Item], sertakan_contoh: bool = False, sertakan_ambigu: bool = False
+) -> tuple[list[Item], dict[str, list[str]]]:
     """(item yang dipakai, {alasan: [id yang dikeluarkan]})."""
     contoh = set() if sertakan_contoh else contoh_pasal()
     keluar: dict[str, list[str]] = {
+        "ditolak ahli hukum": [],
+        "ambigu (tidak masuk angka utama)": [],
         "tanpa ground truth": [],
         "menyebut nomor pasal": [],
         "pasal dipakai sebagai contoh few-shot": [],
     }
     dipakai: list[Item] = []
     for it in items:
-        if not it.pasal:
+        if it.status == "ditolak":
+            keluar["ditolak ahli hukum"].append(it.id)
+        elif it.ambigu and not sertakan_ambigu:
+            keluar["ambigu (tidak masuk angka utama)"].append(it.id)
+        elif not it.pasal:
             keluar["tanpa ground truth"].append(it.id)
         elif extract_pasal_numbers(it.pertanyaan):
             keluar["menyebut nomor pasal"].append(it.id)
@@ -141,6 +172,167 @@ def laporkan_pilihan(total: int, dipakai: list[Item], keluar: dict[str, list[str
     for alasan, ids in keluar.items():
         if ids:
             log(f"  dikeluarkan ({alasan}): {len(ids)} -> {', '.join(ids)}")
+
+
+# ============================================================
+# TAHAP 0: KONFIRMASI AHLI HUKUM (lembar tinjauan -> pertanyaan.json)
+# ============================================================
+
+KEPUTUSAN_SAH = {"setuju", "koreksi", "tolak"}
+
+
+def _kolom(judul) -> str | None:
+    j = " ".join(str(judul or "").upper().split())
+    if j == "ID":
+        return "id"
+    if j.startswith("KEPUTUSAN"):
+        return "keputusan"
+    if j.startswith("PASAL KOREKSI"):
+        return "pasal_koreksi"
+    if j.startswith("CATATAN AHLI"):
+        return "catatan_ahli"
+    return None
+
+
+def _baris_ke_peta(baris: list[list]) -> dict[str, dict]:
+    """baris[0] = kepala kolom; hasil: {id: {keputusan, pasal_koreksi, catatan_ahli}}."""
+    if not baris:
+        return {}
+    idx: dict[str, int] = {}
+    for i, h in enumerate(baris[0]):
+        k = _kolom(h)
+        if k and k not in idx:
+            idx[k] = i
+    if "id" not in idx or "keputusan" not in idx:
+        return {}
+    hasil: dict[str, dict] = {}
+    for r in baris[1:]:
+        def sel(k: str) -> str:
+            i = idx.get(k)
+            v = r[i] if i is not None and i < len(r) else None
+            return "" if v is None else str(v).strip()
+
+        id_ = sel("id")
+        if id_:
+            hasil[id_] = {k: sel(k) for k in ("keputusan", "pasal_koreksi", "catatan_ahli")}
+    return hasil
+
+
+def baca_tinjauan(path: str) -> dict[str, dict]:
+    """Baca lembar tinjauan (.xlsx butuh openpyxl, atau .csv). Semua sheet yang punya kolom ID dan
+    KEPUTUSAN dibaca (sheet Tinjauan dan Ambigu)."""
+    ext = Path(path).suffix.lower()
+    if ext == ".csv":
+        with open(path, encoding="utf-8-sig", newline="") as f:
+            return _baris_ke_peta(list(csv.reader(f)))
+    if ext in (".xlsx", ".xlsm"):
+        try:
+            from openpyxl import load_workbook
+        except ImportError:
+            raise SystemExit(
+                "Membaca .xlsx butuh openpyxl: pip install openpyxl. "
+                "Atau ekspor sheet Tinjauan (dan Ambigu) ke CSV lalu berikan file CSV-nya."
+            )
+        wb = load_workbook(path, data_only=True, read_only=True)
+        hasil: dict[str, dict] = {}
+        for ws in wb.worksheets:
+            hasil.update(_baris_ke_peta([list(r) for r in ws.iter_rows(values_only=True)]))
+        return hasil
+    raise SystemExit(f"format tidak dikenal: {path} (pakai .xlsx atau .csv)")
+
+
+def parse_pasal(teks: str) -> list[int]:
+    """'476, 477' -> [476, 477]. Rentang (476-480) ditolak: tuliskan satu per satu."""
+    if re.search(r"\d+\s*(?:-|–|—|s/d|sampai)\s*\d+", teks, re.IGNORECASE):
+        raise ValueError(f"rentang tidak didukung: {teks!r} (tulis tiap pasal dipisah koma)")
+    return list(dict.fromkeys(int(x) for x in re.findall(r"\d+", teks)))
+
+
+def terapkan_tinjauan(data: list[dict], tinjauan: dict[str, dict], korpus: set[int] | None = None):
+    """(data baru, laporan). `data` tidak diubah. laporan = {setuju, koreksi, tolak, belum,
+    tanpa_baris: [id], kesalahan: [teks]}; selama `kesalahan` tidak kosong, data baru jangan ditulis."""
+    lap: dict[str, list[str]] = {k: [] for k in ("setuju", "koreksi", "tolak", "belum", "tanpa_baris", "kesalahan")}
+    baru: list[dict] = []
+    for d in data:
+        id_ = str(d.get("id"))
+        info = tinjauan.get(id_)
+        if info is None:
+            lap["tanpa_baris"].append(id_)
+            baru.append(d)
+            continue
+        d = dict(d)
+        if info["catatan_ahli"]:
+            d["catatan_ahli"] = info["catatan_ahli"]
+        keputusan = info["keputusan"].lower()
+        if not keputusan:
+            d["pasal"], d["status"] = None, "belum ditinjau"
+            lap["belum"].append(id_)
+        elif keputusan not in KEPUTUSAN_SAH:
+            lap["kesalahan"].append(f"{id_}: keputusan tidak dikenal {keputusan!r} (pilih setuju/koreksi/tolak)")
+        elif keputusan == "tolak":
+            d["pasal"], d["status"] = None, "ditolak"
+            lap["tolak"].append(id_)
+        else:
+            try:
+                if keputusan == "setuju":
+                    pasal = _ke_daftar_pasal(d.get("kandidat_pasal"))
+                    if not pasal:
+                        raise ValueError("setuju, tetapi tidak ada kandidat_pasal (pakai koreksi)")
+                else:
+                    pasal = parse_pasal(info["pasal_koreksi"])
+                    if not pasal:
+                        raise ValueError("koreksi, tetapi kolom PASAL KOREKSI kosong")
+                if korpus is not None and (hilang := [p for p in pasal if p not in korpus]):
+                    raise ValueError(f"pasal {hilang} tidak ada di chunks.json")
+            except ValueError as e:
+                lap["kesalahan"].append(f"{id_}: {e}")
+            else:
+                d["pasal"], d["status"] = pasal, "dikonfirmasi ahli hukum"
+                lap[keputusan].append(id_)
+        baru.append(d)
+    ada = {str(d.get("id")) for d in data}
+    asing = sorted(set(tinjauan) - ada)
+    if asing:
+        lap["kesalahan"].append(f"id di lembar tinjauan tidak ada di pertanyaan.json: {', '.join(asing)}")
+    return baru, lap
+
+
+def cmd_konfirmasi(a: argparse.Namespace) -> int:
+    with open(a.pertanyaan, encoding="utf-8-sig") as f:
+        data = json.load(f)
+    if not isinstance(data, list):
+        raise SystemExit(f"{a.pertanyaan} harus berupa list objek (lihat format di atas file ini)")
+    tinjauan: dict[str, dict] = {}
+    for t in a.tinjauan:
+        tinjauan.update(baca_tinjauan(t))
+    if not tinjauan:
+        print("tidak ada baris tinjauan yang terbaca (cek nama kolom: ID, KEPUTUSAN, PASAL KOREKSI, CATATAN AHLI HUKUM)")
+        return 1
+
+    korpus = None
+    if os.path.exists(a.chunks):
+        with open(a.chunks, encoding="utf-8") as f:
+            korpus = {int(c["pasal"]) for c in json.load(f)}
+    else:
+        print(f"(peringatan) {a.chunks} tidak ada: nomor pasal tidak diperiksa terhadap korpus")
+
+    baru, lap = terapkan_tinjauan(data, tinjauan, korpus)
+    print(f"{a.pertanyaan}: {len(data)} entri, {len(tinjauan)} baris tinjauan")
+    for k, nama in (("setuju", "disetujui"), ("koreksi", "dikoreksi"), ("tolak", "ditolak"), ("belum", "belum ditinjau")):
+        if lap[k]:
+            print(f"  {nama}: {len(lap[k])}" + (f" -> {', '.join(lap[k])}" if k == "tolak" and len(lap[k]) <= 20 else ""))
+    if lap["tanpa_baris"]:
+        print(f"  tidak ada di lembar (tidak diubah): {', '.join(lap['tanpa_baris'])}")
+    if lap["kesalahan"]:
+        print("KESALAHAN. Perbaiki di lembar tinjauan lalu jalankan ulang (file belum diubah):")
+        for k in lap["kesalahan"]:
+            print("  -", k)
+        return 1
+
+    simpan_cache(a.pertanyaan, baru)  # tulis-lalu-ganti, dipakai juga untuk file pertanyaan
+    n_gt = sum(1 for d in baru if _ke_daftar_pasal(d.get("pasal")))
+    print(f"\nDitulis: {a.pertanyaan} ({n_gt} dari {len(baru)} entri punya ground truth)")
+    return 0
 
 
 # ============================================================
@@ -416,7 +608,7 @@ def simpan_hasil(folder: str, agregat: list[dict], detail: list[dict], meta: dic
 
 def cmd_cache(a: argparse.Namespace) -> int:
     semua = load_pertanyaan(a.pertanyaan)
-    items, keluar = pilih_item(semua, a.sertakan_contoh)
+    items, keluar = pilih_item(semua, a.sertakan_contoh, a.sertakan_ambigu)
     laporkan_pilihan(len(semua), items, keluar)
     if not items:
         print("tidak ada pertanyaan yang bisa dipakai")
@@ -430,7 +622,7 @@ def cmd_evaluasi(a: argparse.Namespace) -> int:
     import retrieval as rl  # torch dimuat lebih dulu di dalamnya (catatan macOS)
 
     semua = load_pertanyaan(a.pertanyaan)
-    items, keluar = pilih_item(semua, a.sertakan_contoh)
+    items, keluar = pilih_item(semua, a.sertakan_contoh, a.sertakan_ambigu)
     cache = baca_cache(a.cache)
     varian = a.varian or [v for v in VARIANTS if v in cache.get("varian", {})]
     if not varian:
@@ -493,6 +685,13 @@ def main(argv: list[str] | None = None) -> int:
     umum.add_argument("--cache", default=DEFAULT_CACHE, help=f"file cache pre-retrieval (default {DEFAULT_CACHE})")
     umum.add_argument("--varian", nargs="+", choices=list(VARIANTS), help="varian prompt (default: semua)")
     umum.add_argument("--sertakan-contoh", action="store_true", help="ikutkan pertanyaan yang pasalnya dipakai sebagai contoh few-shot")
+    umum.add_argument("--sertakan-ambigu", action="store_true", help="ikutkan pertanyaan bertanda ambigu (default: dikeluarkan)")
+
+    k = sub.add_parser("konfirmasi", help="terapkan keputusan ahli hukum dari lembar tinjauan ke file pertanyaan")
+    k.add_argument("--pertanyaan", default=DEFAULT_PERTANYAAN, help=f"file pertanyaan, diubah di tempat (default {DEFAULT_PERTANYAAN})")
+    k.add_argument("--tinjauan", nargs="+", default=[DEFAULT_TINJAUAN], help=f"lembar tinjauan .xlsx / .csv (default {DEFAULT_TINJAUAN})")
+    k.add_argument("--chunks", default=DEFAULT_CHUNKS, help="untuk memeriksa nomor pasal (dilewati kalau file tidak ada)")
+    k.set_defaults(fn=cmd_konfirmasi)
 
     c = sub.add_parser("cache", parents=[umum], help="jalankan rewrite/expand (LLM) sekali dan simpan")
     c.add_argument("--ulang", action="store_true", help="hitung ulang entri yang sudah ada")
@@ -502,8 +701,8 @@ def main(argv: list[str] | None = None) -> int:
     e.add_argument("--metode", nargs="+", choices=SEMUA_METODE, default=SEMUA_METODE)
     e.add_argument("--top-k", type=int, default=5, help="jumlah dokumen hasil (default 5, sama dengan pipeline)")
     e.add_argument("--tanpa-reranker", action="store_true", help="lewati semua skenario dengan reranker (jauh lebih cepat)")
-    e.add_argument("--chunks", help="path chunks.json (default dari retrieval_langchain)")
-    e.add_argument("--index", help="path faiss.index (default dari retrieval_langchain)")
+    e.add_argument("--chunks", help="path chunks.json (default dari retrieval.py)")
+    e.add_argument("--index", help="path faiss.index (default dari retrieval.py)")
     e.add_argument("--hasil", default=DEFAULT_HASIL, help=f"folder keluaran (default {DEFAULT_HASIL})")
     e.add_argument("--tampil", type=int, default=30, help="jumlah baris tabel yang dicetak (semua tetap masuk CSV)")
     e.set_defaults(fn=cmd_evaluasi)

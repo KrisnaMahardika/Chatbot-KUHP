@@ -87,25 +87,25 @@ def pesan_berhenti(query: str, pasal_index: dict | None = None) -> str:
 # LLM
 # ============================================================
 
-@lru_cache(maxsize=1)
+# @lru_cache(maxsize=1)
 def get_llm_scope() -> ChatOllama:
     return ChatOllama(model=LLM_MODEL, temperature=0, reasoning=False)
     # return ChatOllama(model=LLM_MODEL, temperature=0)
 
 
-@lru_cache(maxsize=1)
+# @lru_cache(maxsize=1)
 def get_llm_rewrite() -> ChatOllama:
     return ChatOllama(model=LLM_MODEL, temperature=0, reasoning=False)
     # return ChatOllama(model=LLM_MODEL, temperature=0)
 
 
-@lru_cache(maxsize=1)
+# @lru_cache(maxsize=1)
 def get_llm_expand() -> ChatOllama:
     return ChatOllama(model=LLM_MODEL, temperature=0, reasoning=False)
     # return ChatOllama(model=LLM_MODEL, temperature=0)
 
 
-@lru_cache(maxsize=1)
+# @lru_cache(maxsize=1)
 def get_llm() -> ChatOllama:
     """LLM default (dipertahankan untuk kompatibilitas)."""
     return ChatOllama(model=LLM_MODEL, temperature=0, reasoning=False)

@@ -14,7 +14,7 @@ Contoh pakai di notebook (versi manual):
 
     cek_kebocoran(DEV_QUERIES)
     T = transform_all(DEV_QUERIES, rewrite_query, expand_query,
-                      variants=["v0_baseline", "v1_fewshot", "v2_context_fewshot", "v3_role_context_fewshot"],
+                      variants=["v0_baseline", "v1_fewshot"],
                       cache_path="data/eval/transformed.json", tag="gemma4:12b-mlx")
     cetak_transformasi(T)
 

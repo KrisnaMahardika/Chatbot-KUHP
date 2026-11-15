@@ -1,20 +1,904 @@
 [
   {
     "id": "q01",
-    "pertanyaan": "motor saya diambil orang pas lagi parkir, kena pasal apa?",
-    "pasal": 476,
-    "catatan": "CONTOH FORMAT. Ganti dengan pertanyaan dan ground truth yang sudah dikonfirmasi."
+    "pertanyaan": "belum sempat ngambil barangnya tapi udah keburu ketangkep pas lagi bongkar pintu, tetap bisa dipidana nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      17
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KESATU · BAB II - TINDAK PIDANA DAN PERTANGGUNGJAWABAN PIDANA",
+    "catatan": "Unsur utama: percobaan. Pasal pencurian (476/477) mungkin ikut relevan; ahli hukum menentukan.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
   },
   {
     "id": "q02",
-    "pertanyaan": "ada yang sengaja menghilangkan nyawa orang lain, hukumannya apa?",
-    "pasal": [458],
-    "catatan": "CONTOH FORMAT. 'pasal' boleh berupa daftar kalau lebih dari satu pasal dianggap benar."
+    "pertanyaan": "ada maling masuk rumah terus saya pukul sampai dia luka, saya yang bisa dipidana nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      34,
+      43
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KESATU · BAB II - TINDAK PIDANA DAN PERTANGGUNGJAWABAN PIDANA",
+    "catatan": "34 = pembelaan terpaksa; 43 = pembelaan terpaksa yang melampaui batas. Ahli hukum menentukan salah satu atau keduanya.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
   },
   {
     "id": "q03",
+    "pertanyaan": "anak umur 10 tahun ketahuan nyuri di toko, bisa dipenjara nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      40,
+      41
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KESATU · BAB II - TINDAK PIDANA DAN PERTANGGUNGJAWABAN PIDANA",
+    "catatan": "40 = batas usia pertanggungjawaban; 41 = penanganan anak di bawah 12 tahun.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q04",
+    "pertanyaan": "Apakah suatu tindak pidana masih dapat dituntut apabila sudah lewat belasan tahun sejak perbuatan tersebut dilakukan?",
+    "pasal": null,
+    "kandidat_pasal": [
+      136
+    ],
+    "ambigu": false,
+    "gaya": "formal",
+    "bab": "BUKU KESATU · BAB IV - GUGURNYA KEWENANGAN PENUNTUTAN DAN PELAKSANAAN PIDANA",
+    "catatan": "Jawaban bergantung pada ancaman pidana tindak pidananya; 136 memuat tenggang kedaluwarsa.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q05",
+    "pertanyaan": "kalau ada yang berusaha ngegulingin pemerintahan yang sah, ancaman hukumannya berapa lama?",
+    "pasal": null,
+    "kandidat_pasal": [
+      193
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB I - TINDAK PIDANA TERHADAP KEAMANAN NEGARA",
+    "catatan": "Makar punya beberapa pasal menurut sasarannya (191-194); 193 = menggulingkan pemerintah.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q06",
+    "pertanyaan": "ngatain presiden di depan umum itu bisa dipenjara nggak sih sekarang?",
+    "pasal": null,
+    "kandidat_pasal": [
+      218
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB II - TINDAK PIDANA TERHADAP MARTABAT PRESIDEN DAN/ATAU WAKIL PRESIDEN",
+    "catatan": "219 mencakup penyiaran lewat media; 220 = delik aduan.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q07",
+    "pertanyaan": "mau demo tapi nggak lapor polisi dulu, itu kena pidana nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      256
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB V - TINDAK PIDANA TERHADAP KETERTIBAN UMUM",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q08",
+    "pertanyaan": "kemarin ada yang nyebarin berita bohong di grup WA warga, akibatnya warga jadi rusuh. Orang itu kena pasal apa?",
+    "pasal": null,
+    "kandidat_pasal": [
+      263
+    ],
+    "ambigu": false,
+    "gaya": "cerita",
+    "bab": "BUKU KEDUA · BAB V - TINDAK PIDANA TERHADAP KETERTIBAN UMUM",
+    "catatan": "264 (berita tidak pasti/berlebihan) kemungkinan relevan; ahli hukum menentukan.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q09",
+    "pertanyaan": "Apa sanksinya jika seseorang yang dipanggil secara sah sebagai saksi sengaja tidak hadir?",
+    "pasal": null,
+    "kandidat_pasal": [
+      285
+    ],
+    "ambigu": false,
+    "gaya": "formal",
+    "bab": "BUKU KEDUA · BAB VI - TINDAK PIDANA TERHADAP PROSES PERADILAN",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q10",
+    "pertanyaan": "teman saya korban pelecehan dan polisi sudah bilang identitasnya harus dirahasiakan, tapi ada orang yang tetap nyebar nama dan fotonya di medsos. Orang itu bisa dipidana?",
+    "pasal": null,
+    "kandidat_pasal": [
+      292
+    ],
+    "ambigu": false,
+    "gaya": "cerita",
+    "bab": "BUKU KEDUA · BAB VI - TINDAK PIDANA TERHADAP PROSES PERADILAN",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q11",
+    "pertanyaan": "ada orang sengaja bikin gaduh di dekat pura pas orang lagi sembahyang, itu pelanggaran pidana nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      303
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB VII - TINDAK PIDANA TERHADAP AGAMA, KEPERCAYAAN, DAN KEHIDUPAN BERAGAMA ATAU KEPERCAYAAN",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q12",
+    "pertanyaan": "kalau ada yang bakar sampah sampai apinya merembet ke rumah-rumah warga, hukumannya apa?",
+    "pasal": null,
+    "kandidat_pasal": [
+      308
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB VIII - TINDAK PIDANA YANG MEMBAHAYAKAN KEAMANAN UMUM BAGI ORANG, KESEHATAN, DAN BARANG",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q13",
+    "pertanyaan": "mabuk di pinggir jalan terus teriak-teriak ganggu orang lewat, bisa dipidana nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      316
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB VIII - TINDAK PIDANA YANG MEMBAHAYAKAN KEAMANAN UMUM BAGI ORANG, KESEHATAN, DAN BARANG",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q14",
+    "pertanyaan": "bobol akun instagram orang lain tanpa izin itu kena pasal apa?",
+    "pasal": null,
+    "kandidat_pasal": [
+      332
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB VIII - TINDAK PIDANA YANG MEMBAHAYAKAN KEAMANAN UMUM BAGI ORANG, KESEHATAN, DAN BARANG",
+    "catatan": "Konfirmasi apakah akun media sosial termasuk 'sistem elektronik' menurut pasal ini.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q15",
+    "pertanyaan": "nyiksa kucing sampai mati ada pasalnya nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      337
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB VIII - TINDAK PIDANA YANG MEMBAHAYAKAN KEAMANAN UMUM BAGI ORANG, KESEHATAN, DAN BARANG",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q16",
+    "pertanyaan": "waktu ditilang, bapak itu marah terus mukul petugasnya. Dia bisa kena pasal apa?",
+    "pasal": null,
+    "kandidat_pasal": [
+      348
+    ],
+    "ambigu": false,
+    "gaya": "cerita",
+    "bab": "BUKU KEDUA · BAB IX - TINDAK PIDANA TERHADAP KEKUASAAN PEMERINTAHAN",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q17",
+    "pertanyaan": "ngaku-ngaku sebagai polisi terus nyuruh orang ikut dia, itu bisa dipidana nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      362,
+      363
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB IX - TINDAK PIDANA TERHADAP KEKUASAAN PEMERINTAHAN",
+    "catatan": "362 = melakukan perbuatan jabatan yang tidak dijabatnya; 363 = tanda kebesaran jabatan yang bukan haknya.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q18",
+    "pertanyaan": "Bagaimana ancaman pidana bagi saksi yang memberikan keterangan bohong di pengadilan padahal sudah disumpah?",
+    "pasal": null,
+    "kandidat_pasal": [
+      373
+    ],
+    "ambigu": false,
+    "gaya": "formal",
+    "bab": "BUKU KEDUA · BAB X - TINDAK PIDANA KETERANGAN PALSU DI ATAS SUMPAH",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q19",
+    "pertanyaan": "tanda tangan bapak saya dipalsuin di surat perjanjian utang, itu bisa dipidanakan nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      391
+    ],
+    "ambigu": false,
+    "gaya": "cerita",
+    "bab": "BUKU KEDUA · BAB XIII - TINDAK PIDANA PEMALSUAN SURAT",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q20",
+    "pertanyaan": "dokter ngasih surat sakit padahal pasiennya sehat-sehat aja, dokternya bisa kena pidana?",
+    "pasal": null,
+    "kandidat_pasal": [
+      395
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XIII - TINDAK PIDANA PEMALSUAN SURAT",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q21",
+    "pertanyaan": "Apa ancaman pidana bagi orang yang melangsungkan perkawinan padahal masih terikat perkawinan sah dengan orang lain?",
+    "pasal": null,
+    "kandidat_pasal": [
+      402,
+      403
+    ],
+    "ambigu": false,
+    "gaya": "formal",
+    "bab": "BUKU KEDUA · BAB XIV - TINDAK PIDANA TERHADAP ASAL USUL DAN PERKAWINAN",
+    "catatan": "402 = menikah padahal ada penghalang perkawinan yang sah; 403 = tidak memberi tahu penghalang kepada pihak lain.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q22",
+    "pertanyaan": "nyebarin video porno di grup telegram itu kena pasal apa?",
+    "pasal": null,
+    "kandidat_pasal": [
+      407
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XV - TINDAK PIDANA KESUSILAAN",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q23",
+    "pertanyaan": "suaminya selingkuh sampai tidur sama perempuan lain, istrinya bisa lapor pidana nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      411
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XV - TINDAK PIDANA KESUSILAAN",
+    "catatan": "Delik aduan (411 ayat 2).",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q24",
+    "pertanyaan": "tinggal serumah sama pacar tanpa nikah bisa dipenjara nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      412
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XV - TINDAK PIDANA KESUSILAAN",
+    "catatan": "Delik aduan (412 ayat 2).",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q25",
+    "pertanyaan": "di angkot yang lagi rame ada orang yang megang-megang paha saya tanpa izin. Itu masuk pasal apa?",
+    "pasal": null,
+    "kandidat_pasal": [
+      414
+    ],
+    "ambigu": false,
+    "gaya": "cerita",
+    "bab": "BUKU KEDUA · BAB XV - TINDAK PIDANA KESUSILAAN",
+    "catatan": "414 ayat 1 huruf a (di depan umum) atau huruf b (paksa); ahli hukum menentukan.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q26",
+    "pertanyaan": "ikut main judi di warung yang nggak ada izinnya, yang cuma ikut main juga bisa kena?",
+    "pasal": null,
+    "kandidat_pasal": [
+      427
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XV - TINDAK PIDANA KESUSILAAN",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q27",
+    "pertanyaan": "lihat orang tenggelam tapi cuma diam aja nggak nolong, terus orangnya meninggal, bisa kena pidana nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      432
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XVI - TINDAK PIDANA PENELANTARAN ORANG",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q28",
+    "pertanyaan": "ada tetangga yang nyebarin gosip kalau saya korupsi dana RT, padahal itu bohong, biar semua warga tahu. Saya bisa lapor pakai pasal apa?",
+    "pasal": null,
+    "kandidat_pasal": [
+      433
+    ],
+    "ambigu": false,
+    "gaya": "cerita",
+    "bab": "BUKU KEDUA · BAB XVII - TINDAK PIDANA PENGHINAAN",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q29",
+    "pertanyaan": "dikatain bodoh dan sampah di depan teman-teman, itu termasuk pidana nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      436
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XVII - TINDAK PIDANA PENGHINAAN",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q30",
+    "pertanyaan": "Apakah dokter yang membocorkan penyakit pasiennya kepada pihak lain dapat dipidana?",
+    "pasal": null,
+    "kandidat_pasal": [
+      443
+    ],
+    "ambigu": false,
+    "gaya": "formal",
+    "bab": "BUKU KEDUA · BAB XVIII - TINDAK PIDANA PEMBUKAAN RAHASIA",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q31",
+    "pertanyaan": "disekap dan nggak boleh keluar rumah selama seminggu, itu kena pasal apa?",
+    "pasal": null,
+    "kandidat_pasal": [
+      446
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XIX - TINDAK PIDANA TERHADAP KEMERDEKAAN ORANG",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q32",
+    "pertanyaan": "anak perempuan saya 16 tahun dibawa kawin lari sama pacarnya, anaknya sendiri mau ikut tapi kami sebagai orang tua nggak setuju. Cowoknya bisa dipidana?",
+    "pasal": null,
+    "kandidat_pasal": [
+      454
+    ],
+    "ambigu": false,
+    "gaya": "cerita",
+    "bab": "BUKU KEDUA · BAB XIX - TINDAK PIDANA TERHADAP KEMERDEKAAN ORANG",
+    "catatan": "Berdekatan dengan topik pasal 450 (contoh few-shot: penculikan).",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q33",
+    "pertanyaan": "tetangga saya ditawarin kerja ke luar negeri, ternyata malah dijual dan dipaksa kerja tanpa digaji. Orang yang ngerekrutnya bisa kena pasal apa?",
+    "pasal": null,
+    "kandidat_pasal": [
+      455
+    ],
+    "ambigu": false,
+    "gaya": "cerita",
+    "bab": "BUKU KEDUA · BAB XIX - TINDAK PIDANA TERHADAP KEMERDEKAAN ORANG",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q34",
+    "pertanyaan": "hukuman buat orang yang menghilangkan nyawa orang lain, tapi nggak direncanakan sebelumnya, berapa lama?",
+    "pasal": null,
+    "kandidat_pasal": [
+      458
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XXI - TINDAK PIDANA TERHADAP NYAWA DAN JANIN",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q35",
+    "pertanyaan": "Berapa ancaman pidana terhadap pembunuhan yang telah direncanakan terlebih dahulu?",
+    "pasal": null,
+    "kandidat_pasal": [
+      459
+    ],
+    "ambigu": false,
+    "gaya": "formal",
+    "bab": "BUKU KEDUA · BAB XXI - TINDAK PIDANA TERHADAP NYAWA DAN JANIN",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q36",
+    "pertanyaan": "perempuan yang gugurin kandungannya sendiri bisa dipenjara nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      463
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XXI - TINDAK PIDANA TERHADAP NYAWA DAN JANIN",
+    "catatan": "463 ayat 2 memuat pengecualian.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q37",
+    "pertanyaan": "ada yang mukul saya sampai harus dirawat di rumah sakit dan nggak bisa kerja dua minggu, itu kena pasal apa?",
+    "pasal": null,
+    "kandidat_pasal": [
+      466
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XXII - TINDAK PIDANA TERHADAP TUBUH",
+    "catatan": "Pasangan pembeda dengan penganiayaan ringan (471).",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q38",
+    "pertanyaan": "dipukul sampai memar doang, besoknya udah bisa kerja lagi, itu tetap dianggap penganiayaan nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      471,
+      466
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XXII - TINDAK PIDANA TERHADAP TUBUH",
+    "catatan": "471 = penganiayaan ringan (tidak menimbulkan penyakit/halangan). Ahli hukum menentukan apakah 466 juga dihitung.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q39",
+    "pertanyaan": "dia mukul teman saya pakai balok sampai tulangnya patah dan cacat permanen, itu kena pasal apa?",
+    "pasal": null,
+    "kandidat_pasal": [
+      468
+    ],
+    "ambigu": false,
+    "gaya": "cerita",
+    "bab": "BUKU KEDUA · BAB XXII - TINDAK PIDANA TERHADAP TUBUH",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q40",
+    "pertanyaan": "pas tawuran antar sekolah saya cuma ikut-ikutan, nggak mukul siapa-siapa, tetap bisa dipidana nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      472
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XXII - TINDAK PIDANA TERHADAP TUBUH",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q41",
+    "pertanyaan": "dipaksa berhubungan badan sama pacar sendiri pakai ancaman, itu termasuk perkosaan nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      473
+    ],
+    "ambigu": false,
+    "gaya": "cerita",
+    "bab": "BUKU KEDUA · BAB XXII - TINDAK PIDANA TERHADAP TUBUH",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q42",
+    "pertanyaan": "Apakah pengemudi yang karena lalai menabrak pejalan kaki hingga patah kaki dapat dipidana?",
+    "pasal": null,
+    "kandidat_pasal": [
+      474
+    ],
+    "ambigu": false,
+    "gaya": "formal",
+    "bab": "BUKU KEDUA · BAB XXIII - TINDAK PIDANA YANG MENGAKIBATKAN MATI ATAU LUKA KARENA KEALPAAN",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q43",
+    "pertanyaan": "motor saya diambil orang pas lagi parkir, kena pasal apa?",
+    "pasal": null,
+    "kandidat_pasal": [
+      476
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XXIV - TINDAK PIDANA PENCURIAN",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q44",
+    "pertanyaan": "maling masuk rumah malam-malam lewat jendela yang dibongkar terus ngambil laptop. Hukumannya lebih berat dari pencurian biasa nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      477
+    ],
+    "ambigu": false,
+    "gaya": "cerita",
+    "bab": "BUKU KEDUA · BAB XXIV - TINDAK PIDANA PENCURIAN",
+    "catatan": "477 ayat 1 huruf e dan f.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q45",
+    "pertanyaan": "begal motor di jalan sambil ngancem pakai golok, ancaman hukumannya apa?",
+    "pasal": null,
+    "kandidat_pasal": [
+      479
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XXIV - TINDAK PIDANA PENCURIAN",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q46",
+    "pertanyaan": "anak nyuri uang ibunya sendiri, bisa dituntut nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      481
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XXIV - TINDAK PIDANA PENCURIAN",
+    "catatan": "Pelaku keluarga sedarah: penuntutan hanya atas pengaduan.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q47",
+    "pertanyaan": "preman di pasar minta uang keamanan tiap minggu, kalau nggak dikasih dipukul. Itu kena pasal apa?",
+    "pasal": null,
+    "kandidat_pasal": [
+      482
+    ],
+    "ambigu": false,
+    "gaya": "cerita",
+    "bab": "BUKU KEDUA · BAB XXV - TINDAK PIDANA PEMERASAN DAN PENGANCAMAN",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q48",
+    "pertanyaan": "kasir toko nilep uang hasil jualan, itu penggelapan atau pencurian ya?",
+    "pasal": null,
+    "kandidat_pasal": [
+      488
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XXVI - TINDAK PIDANA PENGGELAPAN",
+    "catatan": "Berdekatan dengan pasal 486 (contoh few-shot: penggelapan). 488 = penggelapan karena hubungan kerja.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q49",
+    "pertanyaan": "udah transfer beli barang online tapi barangnya nggak dikirim dan penjualnya ngilang, bisa dipidana nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      492
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XXVII - TINDAK PIDANA PERBUATAN CURANG",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q50",
+    "pertanyaan": "ditipu beli pulsa lima puluh ribu doang, masih bisa dilaporin nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      494
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XXVII - TINDAK PIDANA PERBUATAN CURANG",
+    "catatan": "494 = penipuan ringan (nilai tidak lebih dari Rp1.000.000). 492 kemungkinan ikut dihitung.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q51",
+    "pertanyaan": "makan di restoran terus kabur nggak bayar, itu kena pasal apa?",
+    "pasal": null,
+    "kandidat_pasal": [
+      496
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XXVII - TINDAK PIDANA PERBUATAN CURANG",
+    "catatan": "Alternatif: 492 (penipuan). Ahli hukum menentukan.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q52",
+    "pertanyaan": "ada pabrik tahu yang pakai formalin biar awet dan dijual ke pasar, itu kena pasal apa?",
+    "pasal": null,
+    "kandidat_pasal": [
+      504
+    ],
+    "ambigu": false,
+    "gaya": "cerita",
+    "bab": "BUKU KEDUA · BAB XXVII - TINDAK PIDANA PERBUATAN CURANG",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q53",
+    "pertanyaan": "pengusaha yang udah dinyatakan pailit tapi diam-diam mindahin aset perusahaan biar nggak diambil kreditur, itu bisa dipidana?",
+    "pasal": null,
+    "kandidat_pasal": [
+      512,
+      514
+    ],
+    "ambigu": false,
+    "gaya": "cerita",
+    "bab": "BUKU KEDUA · BAB XXVIII - TINDAK PIDANA TERHADAP KEPERCAYAAN DALAM MENJALANKAN USAHA",
+    "catatan": "512 = merugikan kreditur secara curang (pengusaha pailit); 514 = penipuan hak kreditur.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q54",
+    "pertanyaan": "mobil tetangga sengaja digores pakai paku, bisa dilaporin nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      521
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XXIX - TINDAK PIDANA PERUSAKAN DAN PENGHANCURAN BARANG DAN BANGUNAN GEDUNG",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q55",
+    "pertanyaan": "polisi nyiksa tersangka biar mau ngaku, itu ada pidananya nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      529
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XXX - TINDAK PIDANA JABATAN",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q56",
+    "pertanyaan": "toko hp bekas yang sering banget beli barang hasil curian, kena pasal apa?",
+    "pasal": null,
+    "kandidat_pasal": [
+      592
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XXXIII - TINDAK PIDANA PENADAHAN, PENERBITAN, DAN PENCETAKAN",
+    "catatan": "Berdekatan dengan pasal 591 (contoh few-shot: penadahan). 592 = kebiasaan membeli barang hasil tindak pidana.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q57",
+    "pertanyaan": "di desa saya ada aturan adat yang ngelarang perbuatan tertentu, kalau dilanggar bisa dipidana pakai KUHP nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      597
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XXXIV - TINDAK PIDANA BERDASARKAN HUKUM YANG HIDUP DALAM MASYARAKAT",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q58",
+    "pertanyaan": "Apa ancaman pidana bagi pejabat yang memperkaya diri sendiri sehingga merugikan keuangan negara?",
+    "pasal": null,
+    "kandidat_pasal": [
+      603
+    ],
+    "ambigu": false,
+    "gaya": "formal",
+    "bab": "BUKU KEDUA · BAB XXXV - TINDAK PIDANA KHUSUS",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q59",
+    "pertanyaan": "ngasih amplop ke petugas biar urusan izin cepat kelar, yang ngasih bisa kena pidana nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      606
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XXXV - TINDAK PIDANA KHUSUS",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q60",
+    "pertanyaan": "ketangkep bawa sabu buat dipakai sendiri, kena pasal apa?",
+    "pasal": null,
+    "kandidat_pasal": [
+      609
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XXXV - TINDAK PIDANA KHUSUS",
+    "catatan": "609 ayat 1 huruf a (Narkotika Golongan I bukan tanaman).",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "q61",
+    "pertanyaan": "jual ginjal sendiri lewat internet itu legal nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      345
+    ],
+    "ambigu": false,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB VIII - TINDAK PIDANA YANG MEMBAHAYAKAN KEAMANAN UMUM BAGI ORANG, KESEHATAN, DAN BARANG",
+    "catatan": "",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "a01",
     "pertanyaan": "aku disiul siulkan oleh orang random",
     "pasal": null,
-    "catatan": "Ambigu; menunggu konfirmasi ahli hukum. Selama null, pertanyaan ini dilewati."
+    "kandidat_pasal": [],
+    "ambigu": true,
+    "gaya": "santai",
+    "bab": "(ahli hukum menentukan)",
+    "catatan": "Ambigu: bisa dibaca sebagai kesusilaan (Bab XV) atau ketertiban umum (Bab V). Ahli hukum menentukan pasalnya, atau menyatakan tidak ada.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "a02",
+    "pertanyaan": "dicolek-colek orang di bus, bisa dilaporin nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      414
+    ],
+    "ambigu": true,
+    "gaya": "santai",
+    "bab": "BUKU KEDUA · BAB XV - TINDAK PIDANA KESUSILAAN",
+    "catatan": "Ambigu: tergantung apakah dianggap perbuatan cabul (414) atau perbuatan tidak menyenangkan lainnya.",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
+  },
+  {
+    "id": "a03",
+    "pertanyaan": "tetangga saya yang gangguan jiwa ngerusak pagar rumah saya, dia bisa dipidana nggak?",
+    "pasal": null,
+    "kandidat_pasal": [
+      38,
+      39,
+      521
+    ],
+    "ambigu": true,
+    "gaya": "cerita",
+    "bab": "BUKU KESATU · BAB II - TINDAK PIDANA DAN PERTANGGUNGJAWABAN PIDANA",
+    "catatan": "Ambigu: perusakan barang (521) dikaitkan dengan pertanggungjawaban pelaku disabilitas mental (38, 39).",
+    "sumber": "draf-claude (pasal ke pertanyaan)",
+    "status": "belum ditinjau"
   }
 ]
