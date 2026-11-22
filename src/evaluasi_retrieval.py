@@ -77,7 +77,7 @@ DEFAULT_HASIL = "data/eval/hasil"
 DEFAULT_TINJAUAN = "data/eval/lembar_tinjauan.xlsx"
 DEFAULT_CHUNKS = "data/processed/chunks.json"
 
-SEMUA_METODE = ["bm25", "semantic", "hybrid"]
+SEMUA_METODE = ["bm25", "semantic", "hybrid", "gabung"]
 KUNCI_CACHE = {"rewrite": "rewrite", "expand": "expand", "rewrite+expand": "rewrite_expand"}
 PRE_MODE = ["tanpa", *KUNCI_CACHE]
 
@@ -461,10 +461,11 @@ class Skenario:
 
 def daftar_skenario(varian: list[str], metode: list[str], pakai_reranker: bool = True) -> list[Skenario]:
     rr = ["tanpa", "ya", "query-asli"] if pakai_reranker else ["tanpa"]
-    hasil = [Skenario("-", "tanpa", m, r) for m in metode for r in rr if r != "query-asli"]
+    ada = lambda m, r: not (m == "gabung" and r == "tanpa")  # tanpa reranker, gabung tak punya urutan
+    hasil = [Skenario("-", "tanpa", m, r) for m in metode for r in rr if r != "query-asli" and ada(m, r)]
     for v in varian:
         for pre in KUNCI_CACHE:
-            hasil += [Skenario(v, pre, m, r) for m in metode for r in rr]
+            hasil += [Skenario(v, pre, m, r) for m in metode for r in rr if ada(m, r)]
     return hasil
 
 

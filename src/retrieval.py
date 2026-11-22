@@ -1,4 +1,5 @@
-"""Retrieval KUHP RAG versi LangChain (ramping).
+"""Retrieval KUHP RAG versi LangChain (ramping). File ini = src/retrieval.py;
+versi manual ada di src/retrieval_manual.py.
 
 Hanya butuh `langchain-core` + `langchain-ollama`. Tidak memakai
 `langchain-community` (sunset) maupun `langchain-classic`.
@@ -6,13 +7,13 @@ Hanya butuh `langchain-core` + `langchain-ollama`. Tidak memakai
 Tiga tahap, tiga file:
 
   pre_retrieval.py        routing pasal, penyaring konteks, rewrite, expand (str -> str)
-  retrieval_langchain.py  (file ini) data, embedding, BM25, FAISS, RRF, dan perakit pipeline
+  retrieval.py            (file ini) data, embedding, BM25, FAISS, RRF, dan perakit pipeline
   post_retrieval.py       reranker cross-encoder (list[Document] -> list[Document])
 
 Nama-nama dari `pre_retrieval` dan `post_retrieval` di-import ulang di sini, jadi
-`from retrieval_langchain import rewrite_query` dan sejenisnya tetap berjalan.
+`from retrieval import rewrite_query` dan sejenisnya tetap berjalan.
 
-Terjemahan dari retrieval.py (versi manual):
+Terjemahan dari retrieval_manual.py (versi manual):
 
   routing (regex + lookup)   -> RunnableBranch     (aturan regex di pre_retrieval.py)
   rewrite_query / expand     -> pre_retrieval.py   (query_prompts.*_messages | ChatOllama | pembersih)
@@ -228,11 +229,18 @@ def get_embeddings() -> Embeddings:
 # ============================================================
 
 class BM25Retriever(BaseRetriever):
-    """BM25Okapi (rank_bm25) -> top-k dokumen, skor di metadata."""
+    """BM25Okapi (rank_bm25) -> top-k dokumen, skor di metadata.
+
+    drop_zero : True = pasal tanpa satu pun kata query (skor 0) tidak ikut dirangking, karena BM25
+                tidak punya pendapat tentangnya. Default False (perilaku lama): query tanpa kata yang
+                cocok tetap mengembalikan k pasal berskor 0.
+    Seri skor diurutkan deterministik (pasal yang lebih awal dulu), bukan bergantung urutan argsort.
+    """
 
     bm25: Any
     docs: list[Document]
     k: int = 5
+    drop_zero: bool = False
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -240,8 +248,10 @@ class BM25Retriever(BaseRetriever):
         self, query: str, *, run_manager: CallbackManagerForRetrieverRun
     ) -> list[Document]:
         scores = self.bm25.get_scores(tokenize(query))
-        top = scores.argsort()[::-1][: self.k]
-        return [_with_meta(self.docs[i], score=float(scores[i]), bm25_score=float(scores[i])) for i in top]
+        urut = np.argsort(-scores, kind="stable")
+        if self.drop_zero:
+            urut = urut[scores[urut] > 0]
+        return [_with_meta(self.docs[i], score=float(scores[i]), bm25_score=float(scores[i])) for i in urut[: self.k]]
 
 
 class FaissRetriever(BaseRetriever):
@@ -305,6 +315,26 @@ class RRFRetriever(BaseRetriever):
         return [_with_meta(merged[key], score=rrf[key], rrf_score=rrf[key]) for key in top]
 
 
+class GabunganRetriever(BaseRetriever):
+    """Gabungkan kandidat dari beberapa retriever (kembar per pasal dibuang), TANPA skor fusi.
+
+    Urutannya tidak bermakna: dipakai sebagai base_retriever reranker, yang menentukan urutan akhir."""
+
+    retrievers: list[BaseRetriever]
+    id_key: str = "pasal"
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    def _get_relevant_documents(
+        self, query: str, *, run_manager: CallbackManagerForRetrieverRun
+    ) -> list[Document]:
+        gabung: dict[Any, Document] = {}
+        for retriever in self.retrievers:
+            for doc in retriever.invoke(query, config={"callbacks": run_manager.get_child()}):
+                key = doc.metadata[self.id_key]
+                gabung[key] = _with_meta(gabung[key], **doc.metadata) if key in gabung else doc
+        return list(gabung.values())
+    
 # ============================================================
 # RESOURCES
 # ============================================================
@@ -361,8 +391,11 @@ def build_retriever(
     method: str = "hybrid",
     top_k: int = 5,
     use_reranker: bool = False,
+    bm25_drop_zero: bool = False,
 ) -> BaseRetriever:
     """str -> list[Document] (tanpa pre-retrieval & routing).
+
+    bm25_drop_zero: lihat BM25Retriever.drop_zero (berlaku juga untuk BM25 di dalam hybrid).
 
     Dengan reranker, kandidat diambil top_k * 4 lalu diurutkan ulang ke top_k
     (sama seperti versi manual).
@@ -370,18 +403,25 @@ def build_retriever(
     ambil = top_k * 4 if use_reranker else top_k
 
     if method == "bm25":
-        base: BaseRetriever = BM25Retriever(bm25=res.bm25, docs=res.docs, k=ambil)
+        base: BaseRetriever = BM25Retriever(bm25=res.bm25, docs=res.docs, k=ambil, drop_zero=bm25_drop_zero)
     elif method == "semantic":
         base = FaissRetriever(index=res.index, docs=res.docs, embeddings=res.embeddings, k=ambil)
     elif method == "hybrid":
         base = RRFRetriever(
             retrievers=[
-                BM25Retriever(bm25=res.bm25, docs=res.docs, k=res.n),
+                BM25Retriever(bm25=res.bm25, docs=res.docs, k=res.n, drop_zero=bm25_drop_zero),
                 FaissRetriever(index=res.index, docs=res.docs, embeddings=res.embeddings, k=res.n),
             ],
             c=res.k_rrf,
             k=ambil,
         )
+    elif method == "gabung":  # kandidat BM25 + semantic digabung; urutan akhir hanya dari reranker
+        base = GabunganRetriever(
+            retrievers=[
+                BM25Retriever(bm25=res.bm25, docs=res.docs, k=ambil, drop_zero=bm25_drop_zero),
+                FaissRetriever(index=res.index, docs=res.docs, embeddings=res.embeddings, k=ambil),
+            ]
+    )
     else:
         raise ValueError(f"method tidak dikenal: {method}")
 
@@ -410,6 +450,9 @@ def build_pipeline(
     rewrite/expand -> retrieval -> (rerank).
     `variant` = varian prompt rewrite/expand (lihat query_prompts.VARIANTS).
     """
+    if method == "gabung" and not use_reranker:
+        raise ValueError("method 'gabung' butuh use_reranker=True (urutan akhirnya ditentukan reranker)")
+    
     retrieval = build_query_chain(use_rewriting, use_expansion, variant) | build_retriever(
         res, method, top_k, use_reranker
     )

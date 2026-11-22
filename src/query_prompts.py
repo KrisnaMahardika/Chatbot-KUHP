@@ -47,6 +47,19 @@ kalimatnya saja, tanpa penjelasan tambahan.
 Pertanyaan: "{query}"
 
 Kalimat formal:"""
+# _REWRITE_V0 = """Kamu adalah pakar hukum pidana Indonesia.
+# Tulis ulang pertanyaan berikut menggunakan bahasa hukum formal KUHP Indonesia.
+# Ganti kata sehari-hari dengan istilah hukum yang tepat.
+
+# Contoh:
+# - "mencuri" → "mengambil barang milik orang lain secara melawan hukum"
+# - "memukul" → "melakukan penganiayaan"
+# - "menipu" → "melakukan penipuan dengan tipu muslihat"
+# - "membunuh" → "menghilangkan nyawa orang lain"
+
+# Pertanyaan asli: "{query}"
+
+# Tulis ulang pertanyaan saja, tanpa penjelasan tambahan. """
 
 _EXPAND_V0 = """Berikan maksimal 3 sinonim atau istilah hukum formal yang tepat untuk
 menggantikan kata kunci dalam pertanyaan berikut. Jangan sebutkan jenis tindak pidana
