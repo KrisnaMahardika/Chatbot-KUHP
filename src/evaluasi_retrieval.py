@@ -40,7 +40,7 @@ Pertanyaan yang otomatis dikeluarkan (dan dilaporkan di keluaran):
 
 Skenario = pre-retrieval x metode x reranker:
   pre-retrieval  tanpa | rewrite | expand | rewrite+expand   (expand pada rewrite untuk rewrite+expand)
-  metode         bm25 | semantic | hybrid
+  metode         bm25 | semantic | hybrid | gabung
   reranker       tanpa | ya (rerank memakai query yang sama dengan retrieval = perilaku pipeline)
                  | query-asli (kandidat dari query hasil pre-retrieval, rerank memakai pertanyaan asli;
                  hanya bermakna kalau pre-retrieval aktif)

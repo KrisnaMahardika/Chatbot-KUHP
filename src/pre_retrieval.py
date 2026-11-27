@@ -31,10 +31,13 @@ except ImportError:  # dipakai sebagai modul biasa (sys.path.append("src"))
 # KONFIGURASI
 # ============================================================
 
-# LLM_MODEL = "gemma4:12b-mlx"
-LLM_MODEL = "gemma4:12b"
+LLM_MODEL = "gemma4:26b"
+# LLM_MODEL = "gemma4:31b"
 # LLM_MODEL = "gemma4:e4b"
 # LLM_MODEL = "qwen3.5:9b-mlx"
+# LLM_MODEL = "qwen3.8"
+
+OLLAMA_BASE_URL = "http://100.79.64.44:11434"
 
 
 PESAN_DI_LUAR_KONTEKS = "Pertanyaan ini di luar cakupan chatbot KUHP."
@@ -93,27 +96,27 @@ def pesan_berhenti(query: str, pasal_index: dict | None = None) -> str:
 
 # @lru_cache(maxsize=1)
 def get_llm_scope() -> ChatOllama:
-    # return ChatOllama(model=LLM_MODEL, temperature=0, reasoning=False)
-    return ChatOllama(model=LLM_MODEL, temperature=0)
+    # return ChatOllama(model=LLM_MODEL, base_url=OLLAMA_BASE_URL, temperature=0, reasoning=False)
+    return ChatOllama(model=LLM_MODEL, base_url=OLLAMA_BASE_URL, temperature=0)
 
 
 # @lru_cache(maxsize=1)
 def get_llm_rewrite() -> ChatOllama:
-    # return ChatOllama(model=LLM_MODEL, temperature=0, reasoning=False)
-    return ChatOllama(model=LLM_MODEL, temperature=0)
+    # return ChatOllama(model=LLM_MODEL, base_url=OLLAMA_BASE_URL, temperature=0, reasoning=False)
+    return ChatOllama(model=LLM_MODEL, base_url=OLLAMA_BASE_URL, temperature=0)
 
 
 # @lru_cache(maxsize=1)
 def get_llm_expand() -> ChatOllama:
-    # return ChatOllama(model=LLM_MODEL, temperature=0, reasoning=False)
-    return ChatOllama(model=LLM_MODEL, temperature=0)
+    # return ChatOllama(model=LLM_MODEL, base_url=OLLAMA_BASE_URL, temperature=0, reasoning=False)
+    return ChatOllama(model=LLM_MODEL, base_url=OLLAMA_BASE_URL, temperature=0)
 
 
 # @lru_cache(maxsize=1)
 def get_llm() -> ChatOllama:
     """LLM default (dipertahankan untuk kompatibilitas)."""
-    # return ChatOllama(model=LLM_MODEL, temperature=0, reasoning=False)
-    return ChatOllama(model=LLM_MODEL, temperature=0)
+    # return ChatOllama(model=LLM_MODEL, base_url=OLLAMA_BASE_URL, temperature=0, reasoning=False)
+    return ChatOllama(model=LLM_MODEL, base_url=OLLAMA_BASE_URL, temperature=0)
 
 
 # ============================================================

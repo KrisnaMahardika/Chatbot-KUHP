@@ -40,36 +40,54 @@ VARIANTS: dict[str, dict] = {
 # v0: PROMPT LAMA (persis seperti di retrieval.py semula)
 # ============================================================
 
-_REWRITE_V0 = """Ubah pertanyaan berikut menjadi satu kalimat formal bergaya bahasa yuridis/hukum
-Indonesia, tanpa mengubah maksud aslinya. Jangan menjawab pertanyaannya, cukup tulis ulang
-kalimatnya saja, tanpa penjelasan tambahan.
+# _REWRITE_V0 = """Ubah pertanyaan berikut menjadi satu kalimat formal bergaya bahasa yuridis/hukum
+# Indonesia, tanpa mengubah maksud aslinya. Jangan menjawab pertanyaannya, cukup tulis ulang
+# kalimatnya saja, tanpa penjelasan tambahan.
 
-Pertanyaan: "{query}"
+# Pertanyaan: "{query}"
 
-Kalimat formal:"""
-# _REWRITE_V0 = """Kamu adalah pakar hukum pidana Indonesia.
-# Tulis ulang pertanyaan berikut menggunakan bahasa hukum formal KUHP Indonesia.
-# Ganti kata sehari-hari dengan istilah hukum yang tepat.
+# Kalimat formal:"""
+_REWRITE_V0 = """Kamu adalah pakar hukum pidana Indonesia.
+Tulis ulang pertanyaan berikut menggunakan bahasa hukum formal KUHP Indonesia.
+Ganti kata sehari-hari dengan istilah hukum yang tepat.
 
-# Contoh:
-# - "mencuri" → "mengambil barang milik orang lain secara melawan hukum"
-# - "memukul" → "melakukan penganiayaan"
-# - "menipu" → "melakukan penipuan dengan tipu muslihat"
-# - "membunuh" → "menghilangkan nyawa orang lain"
+Contoh:
+- "mencuri" → "mengambil barang milik orang lain secara melawan hukum"
+- "memukul" → "melakukan penganiayaan"
+- "menipu" → "melakukan penipuan dengan tipu muslihat"
+- "membunuh" → "menghilangkan nyawa orang lain"
 
-# Pertanyaan asli: "{query}"
+Pertanyaan asli: "{query}"
 
-# Tulis ulang pertanyaan saja, tanpa penjelasan tambahan. """
+Tulis ulang pertanyaan saja, tanpa penjelasan tambahan. """
 
-_EXPAND_V0 = """Berikan maksimal 3 sinonim atau istilah hukum formal yang tepat untuk
+_EXPAND_V0 = """Berikan maksimal sinonim atau istilah hukum formal yang tepat untuk
 menggantikan kata kunci dalam pertanyaan berikut. Jangan sebutkan jenis tindak pidana
 lain yang berbeda dari yang dimaksud pertanyaan. Jangan gunakan istilah umum seperti
-"tindak pidana" atau "hukum pidana". Jawab hanya istilahnya, dipisah koma, tanpa
+"tindak pidana" atau "hukum pidana". Jangan gunakan bahasa lain selain bahasa hukum indonesia. 
+Jawab hanya istilahnya, dipisah koma, tanpa
 penjelasan tambahan.
 
 Pertanyaan: "{query}"
 
 Istilah:"""
+
+# _EXPAND_V0 = """Kamu adalah pakar hukum pidana Indonesia.
+
+# Perluas query berikut dengan menambahkan:
+# 1. Sinonim kata kunci
+# 2. Pasal KUHP yang mungkin relevan
+# 3. Istilah hukum terkait
+# Query: {query}
+
+# Jawab HANYA dengan format JSON berikut tanpa penjelasan tambahan:
+# {{
+#     "query_asli": "query asli",
+#     "sinonim": ["kata1", "kata2", "kata3"],
+#     "pasal_terkait": ["pasal X", "pasal Y"],
+#     "query_expanded": "query yang sudah diperluas dengan semua konteks"
+# }}
+# """
 
 # ============================================================
 # v1-v3: ATURAN, PERAN, KONTEKS

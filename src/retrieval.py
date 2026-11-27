@@ -421,7 +421,7 @@ def build_retriever(
                 BM25Retriever(bm25=res.bm25, docs=res.docs, k=ambil, drop_zero=bm25_drop_zero),
                 FaissRetriever(index=res.index, docs=res.docs, embeddings=res.embeddings, k=ambil),
             ]
-    )
+        )
     else:
         raise ValueError(f"method tidak dikenal: {method}")
 
