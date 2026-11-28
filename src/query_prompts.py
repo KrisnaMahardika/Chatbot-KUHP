@@ -47,19 +47,40 @@ VARIANTS: dict[str, dict] = {
 # Pertanyaan: "{query}"
 
 # Kalimat formal:"""
-_REWRITE_V0 = """Kamu adalah pakar hukum pidana Indonesia.
-Tulis ulang pertanyaan berikut menggunakan bahasa hukum formal KUHP Indonesia.
-Ganti kata sehari-hari dengan istilah hukum yang tepat.
+# _REWRITE_V0 = """Kamu adalah pakar hukum pidana Indonesia.
+# Tulis ulang pertanyaan berikut menggunakan bahasa hukum formal KUHP Indonesia.
+# Ganti kata sehari-hari dengan istilah hukum yang tepat.
 
-Contoh:
+# Contoh:
+# - "mencuri" → "mengambil barang milik orang lain secara melawan hukum"
+# - "memukul" → "melakukan penganiayaan"
+# - "menipu" → "melakukan penipuan dengan tipu muslihat"
+# - "membunuh" → "menghilangkan nyawa orang lain"
+
+# Pertanyaan asli: "{query}"
+
+# Tulis ulang pertanyaan saja, tanpa penjelasan tambahan. """
+_REWRITE_V0 = """Kamu adalah pakar hukum pidana Indonesia.
+Tugasmu: menulis ulang pertanyaan awam tentang hukum pidana menjadi satu kalimat berbahasa baku pasal KUHP (UU No. 1 Tahun 2023), supaya mudah dicocokkan dengan teks pasal.
+
+Aturan:
+1. Tulis perbuatan yang ditanyakan dengan rumusan unsur seperti di pasal, misalnya diawali "Setiap Orang yang ...".
+2. Ganti bahasa santai atau slang dengan istilah hukum yang tepat.
+3. Buang kata tanya dan basa-basi (apa, berapa, kena pasal apa, bagaimana) serta detail yang bukan unsur perbuatan (nama orang, hubungan biasa seperti tetangga atau teman, merek, tempat).
+4. Pertahankan detail yang menentukan unsur atau pemberat pidana (misalnya dengan kekerasan, pada malam hari, terhadap anak, nilai barang kecil).
+5. Jangan menambahkan nomor pasal, lamanya hukuman, atau unsur yang tidak disebut atau tersirat dalam pertanyaan.
+6. Jika pertanyaan sudah berbahasa baku, pertahankan sebisa mungkin.
+
+Contoh penggantian istilah (untuk aturan 2):
 - "mencuri" → "mengambil barang milik orang lain secara melawan hukum"
 - "memukul" → "melakukan penganiayaan"
 - "menipu" → "melakukan penipuan dengan tipu muslihat"
 - "membunuh" → "menghilangkan nyawa orang lain"
 
-Pertanyaan asli: "{query}"
+Tulis hanya satu kalimat, tanpa penjelasan dan tanpa menjawab pertanyaan.
 
-Tulis ulang pertanyaan saja, tanpa penjelasan tambahan. """
+Pertanyaan asli: "{query}"
+"""
 
 _EXPAND_V0 = """Berikan maksimal sinonim atau istilah hukum formal yang tepat untuk
 menggantikan kata kunci dalam pertanyaan berikut. Jangan sebutkan jenis tindak pidana
